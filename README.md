@@ -1,7 +1,8 @@
-pygame-ledpixels
+snake-ledpixels
 ================
 
-Displays a pygame Surface on a huge LED display ("LED pixels").
+Lets you play snake on a LED pixel display.
+Forked from pygame-ledpixels by Michael Koetter.
 
 Hardware
 --------

@@ -9,6 +9,7 @@ random.seed()
 BLACK = pygame.Color(0,0,0)
 WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
+GREEN = pygame.Color(0, 255, 0)
 
 # detect if a serial/USB port is given as argument
 hasSerialPortParameter = ( sys.argv.__len__() > 1 )
@@ -28,13 +29,14 @@ else:
 size = ledDisplay.size()
 simDisplay = led.sim.SimDisplay(size)
 screen = pygame.Surface(size)
+gamestate = 1 #1=alive; 0=dead
 
 class Snake:
     def __init__(self):
         self.init()
 
     def init(self):
-        self.body = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1),]
+        self.body = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1)]
         self.movement = "left"
 
     def setFood(self, food):
@@ -44,10 +46,20 @@ class Snake:
         self.screen = screen.get_rect()
 
     def turn(self, direction):
-        self.movement = direction
+        if self.movement == "left" and direction == "right":
+            pass
+        elif self.movement == "right" and direction == "left":
+            pass
+        elif self.movement == "up" and direction == "down":
+            pass
+        elif self.movement == "down" and direction == "up":
+            pass
+        else:
+            self.movement = direction
 
     def move(self):
         global fallbackSize
+        global gamestate
 
         if self.movement == "left":
             self.body.insert(0,self.body[0].move(-1,0))
@@ -59,8 +71,7 @@ class Snake:
             self.body.insert(0,self.body[0].move(0,1))
 
         if not self.screen.contains(self.body[1]) or self.body[0] in self.body[1:]:
-            self.init()
-            self.food.init()
+            gamestate = 0
             return
         
         if not self.body[0] == self.food.position:
@@ -71,6 +82,9 @@ class Snake:
     def draw(self, surface):
         for pixel in self.body:
             surface.fill(WHITE, pixel)
+
+    def len(self):
+        return len(self.body)-1
 
 class Food:
     def __init__(self):
@@ -88,10 +102,13 @@ class Food:
             self.position = pygame.Rect(random.randint(0,fallbackSize[0]-1),random.randint(0,fallbackSize[1]-1),1,1)
 
     def draw(self, surface):
-        surface.fill(WHITE, self.position)
+        surface.fill(RED, self.position)
 
 def main():
+    pygame.init()
     clock = pygame.time.Clock()
+    
+    global gamestate
 
     snake = Snake()
     food = Food()
@@ -114,17 +131,31 @@ def main():
                 elif event.key == K_RIGHT:
                     snake.turn("right")
                 elif event.key == K_SPACE:
-                    pass
+                    if gamestate == 0:
+                        snake.init()
+                        food.init()
+                        gamestate = 1
 
             elif event.type == KEYUP:
                 if event.key == K_UP or event.key == K_DOWN:
                     pass
 
-        screen.fill(BLACK)
-        snake.move()
-        snake.draw(screen)
-        
-        food.draw(screen)
+        if gamestate == 1:
+            screen.fill(BLACK)
+            snake.move()
+            snake.draw(screen)
+            
+            food.draw(screen)
+        else:
+            font = pygame.font.Font(None, 16)
+            text1 = font.render("Game over", 0, RED)
+            text1pos = text1.get_rect()
+            text1pos.midtop = (screen.get_rect().centerx, -1)
+            screen.blit(text1,text1pos)
+            text2 = font.render("Score: "+str(snake.len()), 0, GREEN)
+            text2pos = text2.get_rect()
+            text2pos.midbottom = (screen.get_rect().centerx, 21)
+            screen.blit(text2,text2pos)
 
         simDisplay.update(screen)
         ledDisplay.update(screen)

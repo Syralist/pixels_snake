@@ -1,4 +1,4 @@
-import pygame, led, sys, os, random
+import pygame, led, sys, os, random, csv
 from pygame.locals import *
 
 """ A very simple arcade shooter demo :)
@@ -104,6 +104,37 @@ class Food:
     def draw(self, surface):
         surface.fill(RED, self.position)
 
+class ScoreBoard:
+    def __init__(self, savefile="highscore.txt"):
+        self.savefile = savefile
+        self.scores = []
+        if not os.path.isfile(self.savefile):
+            self.scores.append(["ABC","7"])
+            self.scores.append(["DEF","6"])
+            self.scores.append(["GHI","5"])
+            self.scores.append(["JKL","4"])
+            with open(self.savefile, "wb") as f:
+                writer = csv.writer(f)
+                writer.writerows(self.scores)
+        else:
+            with open(self.savefile, "rb") as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    self.scores.append(row)
+        print self.scores
+
+    def append(self, score):
+        print score
+        for i in range(0, len(self.scores)):
+            if score[1] >= int(self.scores[i][1]):
+                self.scores.insert(i, score)
+                self.scores.pop()
+                with open(self.savefile, "wb") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(self.scores)
+                break
+        print self.scores
+
 def main():
     pygame.init()
     clock = pygame.time.Clock()
@@ -114,6 +145,8 @@ def main():
     food = Food()
     snake.setFood(food)
     snake.setScreen(screen)
+    scoreboard = ScoreBoard()
+    scored = False
 
     while True:
         for event in pygame.event.get():
@@ -135,6 +168,7 @@ def main():
                         snake.init()
                         food.init()
                         gamestate = 1
+                        scored = False
 
             elif event.type == KEYUP:
                 if event.key == K_UP or event.key == K_DOWN:
@@ -156,6 +190,9 @@ def main():
             text2pos = text2.get_rect()
             text2pos.midbottom = (screen.get_rect().centerx, 21)
             screen.blit(text2,text2pos)
+            if not scored:
+                scoreboard.append(["XYZ",snake.len()])
+                scored = True
 
         simDisplay.update(screen)
         ledDisplay.update(screen)

@@ -1,5 +1,6 @@
 import pygame, led, sys, os, random, csv
 from pygame.locals import *
+from bmpfont import bmpfont
 
 """ A very simple arcade shooter demo :)
 """
@@ -10,6 +11,8 @@ BLACK = pygame.Color(0,0,0)
 WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
 GREEN = pygame.Color(0, 255, 0)
+
+wing1font = bmpfont.BmpFont("bmpfont/wing2-3x3px-white.idx")
 
 # detect if a serial/USB port is given as argument
 hasSerialPortParameter = ( sys.argv.__len__() > 1 )
@@ -150,6 +153,8 @@ def main():
 
             flappygroup.update()
             flappygroup.draw(screen)
+
+            wing1font.blit("Flappy",screen)
 
             if pygame.sprite.spritecollideany(flappy, pipegroup) == None and pygame.sprite.spritecollideany(flappy, groundgroup) == None :
                 pass

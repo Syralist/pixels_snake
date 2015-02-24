@@ -1,4 +1,0 @@
-ABC,7
-DEF,6
-GHI,5
-XYZ,4

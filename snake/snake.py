@@ -169,6 +169,9 @@ def main():
                         food.init()
                         gamestate = 1
                         scored = False
+                elif event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
 
             elif event.type == KEYUP:
                 if event.key == K_UP or event.key == K_DOWN:

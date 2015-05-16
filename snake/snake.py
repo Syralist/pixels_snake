@@ -19,11 +19,11 @@ fallbackSize = ( 90, 20 )
 
 if hasSerialPortParameter:
     serialPort = sys.argv[ 1 ]
-    print "INITIALIZING WITH USB-PORT: "+serialPort
-    ledDisplay = led.teensy.TeensyDisplay( serialPort, fallbackSize )
+    print "INITIALIZING WITH PORT: "+serialPort
+    ledDisplay = led.dsclient.DisplayServerClientDisplay(serialport, 8123)
 else:
     print "INITIALIZING WITH SIMULATOR ONLY."
-    ledDisplay = led.teensy.TeensyDisplay( None, fallbackSize )
+    ledDisplay = led.dsclient.DisplayServerClientDisplay("localhost", 8123)
 
 # use same size for sim and real LED panel
 size = ledDisplay.size()

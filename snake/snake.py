@@ -1,5 +1,6 @@
 import pygame, led, sys, os, random, csv
 from pygame.locals import *
+from led.PixelEventHandler import *
 
 """ A very simple arcade shooter demo :)
 """
@@ -137,6 +138,11 @@ class ScoreBoard:
 
 def main():
     pygame.init()
+    pygame.joystick.init()
+    # Initialize first joystick
+    if pygame.joystick.get_count() > 0:
+        stick = pygame.joystick.Joystick(0)
+        stick.init()
     clock = pygame.time.Clock()
     
     global gamestate
@@ -149,33 +155,30 @@ def main():
     scored = False
 
     while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        for pgevent in pygame.event.get():
+            event = process_event(pgevent)
+            # if event.type == QUIT:
+            #     pygame.quit()
+            #     sys.exit()
 
-            elif event.type == KEYDOWN:
-                if event.key == K_UP:
+            if event.type == PUSH:
+                if event.button == UP:
                     snake.turn("up")
-                elif event.key == K_DOWN:
+                elif event.button == DOWN:
                     snake.turn("down")
-                elif event.key == K_LEFT:
+                elif event.button == LEFT:
                     snake.turn("left")
-                elif event.key == K_RIGHT:
+                elif event.button == RIGHT:
                     snake.turn("right")
-                elif event.key == K_SPACE:
+                elif event.button == B1:
                     if gamestate == 0:
                         snake.init()
                         food.init()
                         gamestate = 1
                         scored = False
-                elif event.key == K_ESCAPE:
+                elif event.button == P1:
                     pygame.quit()
                     sys.exit()
-
-            elif event.type == KEYUP:
-                if event.key == K_UP or event.key == K_DOWN:
-                    pass
 
         if gamestate == 1:
             screen.fill(BLACK)

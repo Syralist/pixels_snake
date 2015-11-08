@@ -36,9 +36,11 @@ class Snake:
     def __init__(self):
         self.init()
 
-    def init(self):
-        self.body = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1)]
+    def init(self, startbody = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1)]):
+        print startbody
+        self.body = startbody
         self.movement = "left"
+        print self.body
 
     def setFood(self, food):
         self.food = food
@@ -91,8 +93,8 @@ class Food:
     def __init__(self):
         self.init()
 
-    def init(self):
-        self.position = pygame.Rect(20,10,1,1)
+    def init(self, startposition = pygame.Rect(20,10,1,1)):
+        self.position = startposition
 
     def position(self):
         return self.position
@@ -158,11 +160,11 @@ def main():
     while True:
         for pgevent in pygame.event.get():
             event = process_event(pgevent)
-            # if event.type == QUIT:
-            #     pygame.quit()
-            #     sys.exit()
 
             if event.type == PUSH:
+                if event.button == P1:
+                    pygame.quit()
+                    sys.exit()
                 if event.player == PLAYER1:
                     if event.button == UP:
                         if not moveorder:
@@ -182,13 +184,11 @@ def main():
                             moveorder = True
                     elif event.button == B1:
                         if gamestate == 0:
+                            moveorder = False
                             snake.init()
                             food.init()
                             gamestate = 1
                             scored = False
-                    elif event.button == P1:
-                        pygame.quit()
-                        sys.exit()
 
         if gamestate == 1:
             screen.fill(BLACK)

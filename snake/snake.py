@@ -153,6 +153,7 @@ def main():
     snake.setScreen(screen)
     scoreboard = ScoreBoard()
     scored = False
+    moveorder = False
 
     while True:
         for pgevent in pygame.event.get():
@@ -162,27 +163,37 @@ def main():
             #     sys.exit()
 
             if event.type == PUSH:
-                if event.button == UP:
-                    snake.turn("up")
-                elif event.button == DOWN:
-                    snake.turn("down")
-                elif event.button == LEFT:
-                    snake.turn("left")
-                elif event.button == RIGHT:
-                    snake.turn("right")
-                elif event.button == B1:
-                    if gamestate == 0:
-                        snake.init()
-                        food.init()
-                        gamestate = 1
-                        scored = False
-                elif event.button == P1:
-                    pygame.quit()
-                    sys.exit()
+                if event.player == PLAYER1:
+                    if event.button == UP:
+                        if not moveorder:
+                            snake.turn("up")
+                            moveorder = True
+                    elif event.button == DOWN:
+                        if not moveorder:
+                            snake.turn("down")
+                            moveorder = True
+                    elif event.button == LEFT:
+                        if not moveorder:
+                            snake.turn("left")
+                            moveorder = True
+                    elif event.button == RIGHT:
+                        if not moveorder:
+                            snake.turn("right")
+                            moveorder = True
+                    elif event.button == B1:
+                        if gamestate == 0:
+                            snake.init()
+                            food.init()
+                            gamestate = 1
+                            scored = False
+                    elif event.button == P1:
+                        pygame.quit()
+                        sys.exit()
 
         if gamestate == 1:
             screen.fill(BLACK)
             snake.move()
+            moveorder = False
             snake.draw(screen)
             
             food.draw(screen)

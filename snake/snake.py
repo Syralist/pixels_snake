@@ -1,4 +1,5 @@
 import pygame, led, sys, os, random, csv
+from copy import deepcopy
 from pygame.locals import *
 from led.PixelEventHandler import *
 
@@ -31,14 +32,16 @@ size = ledDisplay.size()
 simDisplay = led.sim.SimDisplay(size)
 screen = pygame.Surface(size)
 gamestate = 1 #1=alive; 0=dead
+body1 = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1)]
+position1 = pygame.Rect(20,10,1,1)
 
 class Snake:
-    def __init__(self):
-        self.init()
+    def __init__(self, startbody):
+        self.init(startbody)
 
-    def init(self, startbody = [pygame.Rect(45,10,1,1),pygame.Rect(46,10,1,1),pygame.Rect(47,10,1,1),pygame.Rect(48,10,1,1)]):
+    def init(self, startbody):
         print startbody
-        self.body = startbody
+        self.body = deepcopy(startbody)
         self.movement = "left"
         print self.body
 
@@ -90,11 +93,11 @@ class Snake:
         return len(self.body)-1
 
 class Food:
-    def __init__(self):
-        self.init()
+    def __init__(self, startposition):
+        self.init(startposition)
 
-    def init(self, startposition = pygame.Rect(20,10,1,1)):
-        self.position = startposition
+    def init(self, startposition):
+        self.position = deepcopy(startposition)
 
     def position(self):
         return self.position
@@ -149,8 +152,8 @@ def main():
     
     global gamestate
 
-    snake = Snake()
-    food = Food()
+    snake = Snake(body1)
+    food = Food(position1)
     snake.setFood(food)
     snake.setScreen(screen)
     scoreboard = ScoreBoard()
@@ -185,8 +188,8 @@ def main():
                     elif event.button == B1:
                         if gamestate == 0:
                             moveorder = False
-                            snake.init()
-                            food.init()
+                            snake.init(body1)
+                            food.init(position1)
                             gamestate = 1
                             scored = False
 
